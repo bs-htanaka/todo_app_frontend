@@ -1,23 +1,23 @@
 <template>
-  <div>
+  <div class="m-x-auto">
     <h2>ToDO List</h2>
     <div v-if="!isEditing">
       <input type="input" v-model='todo'>
-      <button @click='addTodo'>ADD</button>
+      <v-btn @click='addTodo'>ADD</v-btn>
     </div>
     <div v-else>
       <input type="input" v-model='todo.name'>
-      <button @click='updateTodo'>update</button>
+      <v-btn @click='updateTodo'>update</v-btn>
     </div>
     <div>
-      <ol>
-        <li v-for="(todo, index) in todos" :key="index">
+      <ul>
+        <v-list v-for="(todo, index) in todos" :key="index">
           <span> {{ todo.name }} </span>
 
-          <button @click="editTodo(index, todo)">edit</button>
-          <button @click="deleteTodo(index)">delete</button>
-        </li>
-      </ol>
+          <v-btn @click="editTodo(index, todo)">edit</v-btn>
+          <v-btn @click="deleteTodo(todo)">delete</v-btn>
+        </v-list>
+      </ul>
     </div>
   </div>
 </template>
@@ -29,6 +29,7 @@ export default {
   name: 'ToDoList',
   data() {
     return {
+      todo: '',
       todos: [],
       storageKey: 'vue-todos',
       isEditing: false,
@@ -49,8 +50,9 @@ export default {
         id: 1,
         name: this.todo
       }
-      this.todos.push(todo)
-      sessionStorage.setItem(this.storageKey, JSON.stringify(this.todos));
+      axios
+      .post('http://localhost:3000/todos', todo)
+      .then( response => (this.todos = response.data))
       this.todo = ''
     },
     editTodo: function (index, todo) {
@@ -59,14 +61,17 @@ export default {
       this.isEditing = true
     },
     updateTodo: function () {
-      this.todos.splice(this.selectedIndex, 1, this.todo)
-      sessionStorage.setItem(this.storageKey, JSON.stringify(this.todos));
-      this.isEditing = false
+      const id = this.todo.id
+      axios
+      .put(`http://localhost:3000/todos/${id}`, this.todo)
+      .then( response => (this.todos = response.data))
       this.todo = ''
     },
-    deleteTodo: function (index) {
-      this.todos.splice(index, 1);
-      sessionStorage.setItem(this.storageKey, JSON.stringify(this.todos));
+    deleteTodo: function (todo) {
+      const id = todo.id
+      axios
+      .delete(`http://localhost:3000/todos/${id}`, this.todo)
+      .then( response => (this.todos = response.data))
     },
     getTodos: function(){
 
