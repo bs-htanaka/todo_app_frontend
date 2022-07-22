@@ -1,24 +1,30 @@
 <template>
-  <div class="m-x-auto">
-    <h2>ToDO List</h2>
-    <div v-if="!isEditing">
-      <input type="input" v-model='todo'>
-      <v-btn @click='addTodo'>ADD</v-btn>
-    </div>
-    <div v-else>
-      <input type="input" v-model='todo.name'>
-      <v-btn @click='updateTodo'>update</v-btn>
-    </div>
-    <div>
-      <ul>
-        <v-list v-for="(todo, index) in todos" :key="index">
-          <span> {{ todo.name }} </span>
+  <div>
+    <v-card class="mx-auto" max-width="500">
+    <v-toolbar color="purple" dark>
+      <v-toolbar-title>ToDo List</v-toolbar-title>
+      <v-spacer></v-spacer>
+    </v-toolbar>
 
-          <v-btn @click="editTodo(index, todo)">edit</v-btn>
-          <v-btn @click="deleteTodo(todo)">delete</v-btn>
-        </v-list>
-      </ul>
-    </div>
+    <v-list subheader three-line>
+      <v-form v-if="!isEditing">
+        <v-text-field label="Name" v-model='todo'></v-text-field>
+        <v-btn @click='addTodo' color="primary" small>ADD</v-btn>
+      </v-form>
+      <v-form v-else>
+        <v-text-field label="Name" v-model='todo.name'></v-text-field>
+        <v-btn @click='updateTodo' color="primary" small>update</v-btn>
+      </v-form>
+
+      <v-list-item v-for="(todo, index) in todos" :key="index">
+        <v-list-item-content>
+          <v-list-item-title>{{ todo.name }}</v-list-item-title>
+        </v-list-item-content>
+        <v-btn @click="editTodo(index, todo)" color="success" small>edit</v-btn>
+        <v-btn @click="deleteTodo(todo)" color="error" small>delete</v-btn>
+      </v-list-item>
+    </v-list>
+  </v-card>
   </div>
 </template>
 
@@ -73,9 +79,7 @@ export default {
       .delete(`http://localhost:3000/todos/${id}`, this.todo)
       .then( response => (this.todos = response.data))
     },
-    getTodos: function(){
-
-    }
+    
   }
 }
 </script>
