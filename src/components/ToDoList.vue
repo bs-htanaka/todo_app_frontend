@@ -48,17 +48,18 @@ export default {
       .then( response => (this.todos = response.data))
   },
   methods: {
-    addTodo: function () {
+    addTodo: async function () {
       if (this.todo === '') {
         return
       }
       let todo = {
-        id: 1,
         name: this.todo
       }
-      axios
+      await axios
       .post('http://localhost:3000/todos', todo)
-      .then( response => (this.todos = response.data))
+      const newTodos = [ ...this.todos ]
+      newTodos.push(todo)
+      this.todos = newTodos
       this.todo = ''
     },
     editTodo: function (index, todo) {
@@ -79,7 +80,6 @@ export default {
       .delete(`http://localhost:3000/todos/${id}`, this.todo)
       .then( response => (this.todos = response.data))
     },
-    
   }
 }
 </script>
