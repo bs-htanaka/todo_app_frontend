@@ -6,14 +6,26 @@
       <v-spacer></v-spacer>
     </v-toolbar>
 
+    <v-text-field v-model="keyword" label="Search" type="text">
+      <template v-slot:append-outer>
+        <v-btn color="primary" small @click="searchTodo()">search</v-btn>
+      </template>
+    </v-text-field>
+
     <v-list subheader three-line>
       <v-form v-if="!isEditing">
-        <v-text-field label="Name" v-model='todo'></v-text-field>
-        <v-btn @click='addTodo' color="primary" small>ADD</v-btn>
+        <v-text-field label="ToDoを入力" v-model='todo'>
+          <template v-slot:append-outer>
+            <v-btn @click='addTodo' color="primary" small>ADD</v-btn>
+          </template>
+        </v-text-field>
       </v-form>
       <v-form v-else>
-        <v-text-field label="Name" v-model='todo.name'></v-text-field>
-        <v-btn @click='updateTodo' color="primary" small>update</v-btn>
+        <v-text-field label="ToDoを入力" v-model='todo.name'>
+          <template v-slot:append-outer>
+            <v-btn @click='updateTodo' color="primary" small>update</v-btn>
+          </template>
+        </v-text-field>
       </v-form>
 
       <v-list-item v-for="(todo, index) in todos" :key="index">
@@ -39,7 +51,8 @@ export default {
       todos: [],
       storageKey: 'vue-todos',
       isEditing: false,
-      selectedIndex: null
+      selectedIndex: null,
+      keyword: ''
     }
   },
   mounted(){
@@ -80,6 +93,12 @@ export default {
       .delete(`http://localhost:3000/todos/${id}`, this.todo)
       .then( response => (this.todos = response.data))
     },
+    searchTodo: function () {
+      axios
+      .get(`http://localhost:3000/search`, { params: { keyword: this.keyword } } )
+      .then( response => (this.todos = response.data))
+      this.keyword = ''
+    }
   }
 }
 </script>
