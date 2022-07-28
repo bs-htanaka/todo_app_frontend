@@ -29,8 +29,9 @@
       </v-form>
 
       <v-list-item v-for="(todo, index) in todos" :key="index">
+        <v-checkbox v-model="todo.is_done"></v-checkbox>
         <v-list-item-content>
-          <v-list-item-title>{{ todo.name }}</v-list-item-title>
+          <v-list-item-title :class="{ 'text-decoration-line-through': todo.is_done }">{{ todo.name }}</v-list-item-title>
         </v-list-item-content>
         <v-btn @click="editTodo(index, todo)" color="success" small>edit</v-btn>
         <v-btn @click="deleteTodo(todo)" color="error" small>delete</v-btn>
@@ -66,7 +67,8 @@ export default {
         return
       }
       let todo = {
-        name: this.todo
+        name: this.todo,
+        is_done: false
       }
       await axios
       .post('http://localhost:3000/todos', todo)
